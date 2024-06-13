@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import shop.mtcoding.bank.config.RedisConfig;
 
 @RequiredArgsConstructor
 @Controller
@@ -12,9 +14,18 @@ public class UserController {
 
     private final HttpSession session;
     private final UserService userService;
+    private final RedisConfig redisConfig;
+
+    @GetMapping("/redis/test")
+    public @ResponseBody String redisTest(){
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        System.out.println("sessionUser = " + sessionUser.getUsername());
+        return "redis test";
+    }
 
     @GetMapping("/home")
     public String home(){
+        System.out.println(redisConfig.getRedisHost());
         return "home";
     }
 
@@ -23,6 +34,7 @@ public class UserController {
         session.invalidate();
         return "redirect:/login-form";
     }
+
 
     @PostMapping("/login")
     public String login(UserRequest.LoginDTO reqDTO){
